@@ -8,13 +8,70 @@
 $ npm install --save star-wars-api
 ```
 
-
 ## Usage
 
 ```js
 var StarWarsAPI = require('star-wars-api');
 
 swapi = new StarWarsAPI();
+```
+
+### Get
+All methods return a bluebird promise.
+
+`.get` requires two arguments, a `resource` and an `id`. `id` can be a `string`, `number`, or `array`.
+
+```js
+swapi.get('people', 1)
+    .then(person => /* do something */)
+    .catch(err => /* handle error */);
+    
+swapi.get('starships', [9, 10])
+    .then(console.log) // logs [{name: 'Death Star' ...}, {name: 'Millenium Falcon' ...}]
+```
+
+Errors and responses from swapi.co that are not of status code 200 will
+be rejected.
+
+```js
+swapi.get('people', 'Vegeta')
+    .catch(console.error) // logs [Error] 404
+```
+
+Too few arguments to `.get` also throws an error. All resources except a full url require an `id` argument to passed to `.get` with them. 
+
+```js
+// no id argument results in a rejected promise
+swapi.get('planets')
+    .then(console.log)    // doesn't log
+    .catch(console.error) // logs [Error] id argument required
+
+// full resource url doesn't need id
+swapi.get('http://swapi.co/api/species/3/')
+    .then(console.log) // {name: 'Wookiee', language: 'Shyriiwook'...}
+```
+
+The full list of valid resources is: 
+
+```
+people, films, starships, planets, vehicles, species
+```
+
+
+### Convenience Methods
+
+All valid resource argumets to `.get` also have convenience methods: 
+
+```js
+swapi.people(1)
+swapi.films([7, 6, 3, 2, 1])
+// etc...
+```
+
+The full list of api resources can obtained from the api via `.describe`
+
+```js
+swapi.describe()
 ```
 
 ## License

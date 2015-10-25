@@ -1,4 +1,3 @@
-'use strict';
 var path = require('path');
 var gulp = require('gulp');
 var eslint = require('gulp-eslint');
@@ -16,55 +15,56 @@ var isparta = require('isparta');
 require('babel-core/register');
 
 gulp.task('static', function () {
-  return gulp.src('**/*.js')
-    .pipe(excludeGitignore())
-    .pipe(eslint())
-    .pipe(eslint.format())
-    .pipe(eslint.failAfterError());
+    return gulp.src('**/*.js')
+        .pipe(excludeGitignore())
+        .pipe(eslint())
+        .pipe(eslint.format())
+        .pipe(eslint.failAfterError());
 });
 
 gulp.task('nsp', function (cb) {
-  nsp('package.json', cb);
+    nsp('package.json', cb);
 });
 
 gulp.task('pre-test', function () {
-  return gulp.src('lib/**/*.js')
-    .pipe(istanbul({
-      includeUntested: true
-,      instrumenter: isparta.Instrumenter
-    }))
-    .pipe(istanbul.hookRequire());
+    return gulp.src('lib/**/*.js')
+        .pipe(istanbul({
+            includeUntested: true,
+            instrumenter: isparta.Instrumenter
+        }))
+        .pipe(istanbul.hookRequire());
 });
 
 gulp.task('test', ['pre-test'], function (cb) {
-  var mochaErr;
+    var mochaErr;
 
-  gulp.src('test/**/*.js')
-    .pipe(plumber())
-    .pipe(mocha({reporter: 'spec'}))
-    .on('error', function (err) {
-      mochaErr = err;
-    })
-    .pipe(istanbul.writeReports())
-    .on('end', function () {
-      cb(mochaErr);
-    });
+    gulp.src(['test/unit.js', 'test/integration.js'])
+        .pipe(plumber())
+        .pipe(mocha({reporter: 'spec'}))
+        .on('error', function (err) {
+            mochaErr = err;
+        })
+        .pipe(istanbul.writeReports())
+        .on('_end', function () {
+            cb(mochaErr);
+        });
 });
 
 gulp.task('coveralls', ['test'], function () {
-  if (!process.env.CI) {
-    return;
-  }
+    if (!process.env.CI) {
+        return;
+    }
 
-  return gulp.src(path.join(__dirname, 'coverage/lcov.info'))
-    .pipe(coveralls());
+    return gulp.src(path.join(__dirname, 'coverage/lcov.info'))
+        .pipe(coveralls());
 });
 
 gulp.task('babel', function () {
-  return gulp.src('lib/**/*.js')
-    .pipe(babel())
-    .pipe(gulp.dest('dist'));
+    return gulp.src('lib/**/*.js')
+        .pipe(babel())
+        .pipe(gulp.dest('dist'));
 });
 
 gulp.task('prepublish', ['nsp', 'babel']);
 gulp.task('default', ['static', 'test', 'coveralls']);
+

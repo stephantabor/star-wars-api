@@ -1,6 +1,6 @@
 {
   "name": "star-wars-api",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "swapi.co (star wars api) wrapper for node",
   "homepage": "https://github.com/stephantabor/star-wars-api",
   "repository": "stephantabor/star-wars-api",
@@ -21,6 +21,8 @@
     "swapi"
   ],
   "devDependencies": {
+    "chai": "^3.4.0",
+    "chai-as-promised": "^5.1.0",
     "gulp": "^3.6.0",
     "gulp-eslint": "^1.0.0",
     "gulp-exclude-gitignore": "^1.0.0",
@@ -37,5 +39,9 @@
     "prepublish": "gulp prepublish",
     "test": "gulp"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "^2.10.2",
+    "request": "^2.65.0"
+  }
 }
